@@ -1,38 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Mon premier site</title>
-  <style>
-    body {
-      background: #0f172a;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .box {
-      text-align: center;
-      background: #020617;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    }
-    h1 {
-      color: #38bdf8;
-    }
-  </style>
+  <title>Test Site</title>
 </head>
-<body>
-
-  <div class="box">
-    <h1>Bienvenue 🚀</h1>
-    <p>Mon site GitHub Pages fonctionne correctement.</p>
-    <p>Créé depuis Android 📱</p>
-  </div>
-
+<body style="background:black;color:lime;text-align:center;">
+  <h1>✅ SITE OK</h1>
+  <p>GitHub Pages fonctionne</p>
 </body>
 </html>
