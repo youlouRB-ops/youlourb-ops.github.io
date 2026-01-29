@@ -1,54 +1,1091 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GenBook AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-        color: #e2e8f0;
-      }
-      h1, h2, h3, h4, h5, h6, .font-serif {
-        font-family: 'Playfair Display', serif;
-      }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #1e293b; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #475569; 
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #64748b; 
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
-    "jspdf": "https://esm.sh/jspdf@2.5.1",
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js",
-    "firebase/": "https://esm.sh/firebase@^12.8.0/"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yooshop - Marketplace Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
-  <body>
-    <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+<body>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --bg-main: #0f0f23;
+            --bg-secondary: #1a1a35;
+            --bg-card: #242442;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --border: rgba(99, 102, 241, 0.2);
+            --shadow: rgba(99, 102, 241, 0.3);
+            --success: #10b981;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --gradient-2: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.8), transparent 70%);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.6), transparent 70%);
+            top: 50%;
+            right: -10%;
+            animation-delay: 7s;
+        }
+
+        .orb-3 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.5), transparent 70%);
+            bottom: -15%;
+            left: 30%;
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -50px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 50%;
+            animation: particle-float 15s infinite;
+        }
+
+        @keyframes particle-float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .logo-container:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px var(--shadow);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.9rem 3rem 0.9rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0.65rem 1.3rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .admin-btn {
+            padding: 0.75rem 1.8rem;
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem 4rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 1.2rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.4);
+        }
+
+        .product-cover {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+        }
+
+        .product-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s;
+        }
+
+        .product-card:hover .product-cover img {
+            transform: scale(1.08);
+        }
+
+        .product-info {
+            padding: 1.8rem;
+        }
+
+        .product-category {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-light);
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .product-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-price-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .product-price-euro {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.9rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-preview {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-light);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-preview:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 0, 0, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(90vh - 200px);
+        }
+
+        .pdf-preview-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .pdf-preview-container canvas {
+            width: 100%;
+            display: block;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .btn-contact {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-contact:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Admin */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10001;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .admin-panel.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .admin-content {
+            background: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 900px;
+            width: 100%;
+            margin-top: 2rem;
+            border: 2px solid var(--border);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .close-admin {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .password-section {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .currency-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            padding: 2rem;
+            background: rgba(99, 102, 241, 0.05);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .file-upload-label:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 0.7rem;
+            color: var(--success);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 1.2rem;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            padding: 1.2rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .admin-form {
+            display: none;
+        }
+
+        .admin-form.unlocked {
+            display: block;
+        }
+
+        .success-message {
+            display: none;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .admin-products-list {
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border);
+        }
+
+        .admin-product-item {
+            background: var(--bg-card);
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-delete {
+            padding: 0.7rem 1.3rem;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        footer {
+            margin-top: 6rem;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+            .search-container {
+                order: 3;
+                width: 100%;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            .product-actions,
+            .currency-selector {
+                flex-direction: column;
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="animated-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-container" onclick="document.getElementById('logoInput').click()">
+                <div class="logo-image" id="logoPreview">Y</div>
+                <div class="logo-text">Yooshop</div>
+            </div>
+            <input type="file" id="logoInput" accept="image/*" style="display:none">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Rechercher...">
+                <button class="search-btn" onclick="searchProducts()">🔍</button>
+            </div>
+            <button class="admin-btn" onclick="openAdmin()">🔐 Admin</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Marketplace Premium</h1>
+        <p>Produits digitaux de haute qualité</p>
+    </section>
+
+    <div class="container">
+        <h2 class="section-title">Nos Produits</h2>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+
+    <div class="modal" id="pdfModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Aperçu</h3>
+                <button class="modal-close" onclick="closePdfModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-preview-container" id="pdfPreviewContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <p>Pour obtenir ce produit :</p>
+                <a href="https://wa.me/242067491815" class="btn-contact" id="modalWhatsapp">
+                    Contactez-nous sur WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-content">
+            <div class="admin-header">
+                <h2>Administration</h2>
+                <button class="close-admin" onclick="closeAdmin()">Fermer</button>
+            </div>
+            <div class="success-message" id="successMessage">✓ Produit ajouté !</div>
+            <div class="password-section" id="passwordSection">
+                <h3 style="margin-bottom:1rem">Connexion</h3>
+                <input type="password" id="adminPassword" class="form-input" placeholder="Mot de passe">
+                <button class="btn-submit" style="margin-top:1rem;width:100%" onclick="unlockAdmin()">Déverrouiller</button>
+            </div>
+            <div class="admin-form" id="adminForm">
+                <h3 style="margin-bottom:1.5rem">Nouveau Produit</h3>
+                <form id="productForm" onsubmit="addProduct(event)">
+                    <div class="form-group">
+                        <label>📄 PDF (obligatoire)</label>
+                        <label for="productPdf" class="file-upload-label">
+                            📎 Importer PDF
+                        </label>
+                        <input type="file" id="productPdf" accept="application/pdf" onchange="handlePdfUpload(this)" required>
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="productDescription" class="form-input" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix</label>
+                        <div class="currency-selector">
+                            <div>
+                                <small style="display:block;margin-bottom:0.5rem">FCFA</small>
+                                <input type="number" id="productPriceFCFA" class="form-input" required>
+                            </div>
+                            <div>
+                                <small style="display:block;margin-bottom:0.5rem">EUR</small>
+                                <input type="number" id="productPriceEUR" class="form-input" step="0.01" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie</label>
+                        <input type="text" id="productCategory" class="form-input" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Ajouter</button>
+                        <button type="button" class="btn-reset" onclick="resetForm()">Réinitialiser</button>
+                    </div>
+                </form>
+                <div class="admin-products-list">
+                    <h3 style="margin-bottom:1rem">Produits</h3>
+                    <div id="adminProductsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Yooshop</p>
+        <p>+242 067 49 18 15</p>
+    </footer>
+
+    <script>
+        const ADMIN_PASSWORD = 'youlouRBZTEBladeA36';
+        const WHATSAPP_NUMBER = '242067491815';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 15 + 's';
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        document.getElementById('logoInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('logoPreview').innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;
+                    localStorage.setItem('yooshop_logo', event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        const savedLogo = localStorage.getItem('yooshop_logo');
+        if (savedLogo) {
+            document.getElementById('logoPreview').innerHTML = `<img src="${savedLogo}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;
+        }
+
+        function getProducts() {
+            return JSON.parse(localStorage.getItem('yooshop_products') || '[]');
+        }
+
+        function saveProducts(products) {
+            localStorage.setItem('yooshop_products', JSON.stringify(products));
+        }
+
+        async function handlePdfUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            document.getElementById('fileName').textContent = 'Traitement...';
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 2 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                window.currentPdfData = {
+                    file: arrayBuffer,
+                    cover: canvas.toDataURL('image/jpeg', 0.9),
+                    name: file.name.replace('.pdf', '')
+                };
+                document.getElementById('fileName').textContent = `✓ ${file.name}`;
+            } catch (error) {
+                document.getElementById('fileName').textContent = '❌ Erreur';
+            }
+        }
+
+        function displayProducts() {
+            const products = getProducts();
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><h3>Aucun Produit</h3></div>';
+                return;
+            }
+            grid.innerHTML = products.map((p, i) => `
+                <div class="product-card">
+                    <div class="product-cover">
+                        <img src="${p.cover}" alt="${p.title}">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">${p.category}</div>
+                        <h3 class="product-title">${p.title}</h3>
+                        <p class="product-description">${p.description}</p>
+                        <div class="product-price-container">
+                            <div class="product-price">${parseInt(p.priceFCFA).toLocaleString()} FCFA</div>
+                            <div class="product-price-euro">€${parseFloat(p.priceEUR).toFixed(2)}</div>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-preview" onclick="openPdfPreview(${p.id})">👁️ Aperçu</button>
+                            <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je veux acheter "${p.title}"`)}" class="btn btn-whatsapp">Commander</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchProducts() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            if (!term) {
+                displayProducts();
+                return;
+            }
+            const products = getProducts().filter(p =>
+                p.title.toLowerCase().includes(term) ||
+                p.description.toLowerCase().includes(term) ||
+                p.category.toLowerCase().includes(term)
+            );
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><h3>Aucun Résultat</h3></div>';
+                return;
+            }
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="product-cover"><img src="${p.cover}" alt="${p.title}"></div>
+                    <div class="product-info">
+                        <div class="product-category">${p.category}</div>
+                        <h3 class="product-title">${p.title}</h3>
+                        <p class="product-description">${p.description}</p>
+                        <div class="product-price-container">
+                            <div class="product-price">${parseInt(p.priceFCFA).toLocaleString()} FCFA</div>
+                            <div class="product-price-euro">€${parseFloat(p.priceEUR).toFixed(2)}</div>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-preview" onclick="openPdfPreview(${p.id})">👁️ Aperçu</button>
+                            <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Bonjour, je veux acheter "${p.title}"`)}" class="btn btn-whatsapp">Commander</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function openPdfPreview(productId) {
+            const product = getProducts().find(p => p.id === productId);
+            if (!product) return;
+            document.getElementById('modalTitle').textContent = product.title;
+            const container = document.getElementById('pdfPreviewContainer');
+            container.innerHTML = '<div style="text-align:center;padding:2rem">Chargement...</div>';
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: product.pdfData }).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+                container.innerHTML = '';
+                container.appendChild(canvas);
+            } catch (error) {
+                container.innerHTML = '<p style="text-align:center">Erreur</p>';
+            }
+            document.getElementById('pdfModal').classList.add('active');
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdfModal').classList.remove('active');
+        }
+
+        function openAdmin() {
+            document.getElementById('adminPanel').classList.add('active');
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminPanel').classList.remove('active');
+        }
+
+        function unlockAdmin() {
+            if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
+                document.getElementById('passwordSection').style.display = 'none';
+                document.getElementById('adminForm').classList.add('unlocked');
+                displayAdminProducts();
+            } else {
+                alert('❌ Mot de passe incorrect');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('fileName').textContent = '';
+            window.currentPdfData = null;
+        }
+
+        async function addProduct(event) {
+            event.preventDefault();
+            if (!window.currentPdfData) {
+                alert('Veuillez importer un PDF');
+                return;
+            }
+            const product = {
+                id: Date.now(),
+                title: window.currentPdfData.name,
+                category: document.getElementById('productCategory').value,
+                description: document.getElementById('productDescription').value,
+                priceFCFA: document.getElementById('productPriceFCFA').value,
+                priceEUR: document.getElementById('productPriceEUR').value,
+                cover: window.currentPdfData.cover,
+                pdfData: window.currentPdfData.file
+            };
+            const products = getProducts();
+            products.push(product);
+            saveProducts(products);
+            resetForm();
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+            displayProducts();
+            displayAdminProducts();
+        }
+
+        function displayAdminProducts() {
+            const products = getProducts();
+            const list = document.getElementById('adminProductsList');
+            if (products.length === 0) {
+                list.innerHTML = '<p>Aucun produit</p>';
+                return;
+            }
+            list.innerHTML = products.map(p => `
+                <div class="admin-product-item">
+                    <div><strong>${p.title}</strong><br><small>${parseInt(p.priceFCFA).toLocaleString()} FCFA</small></div>
+                    <button class="btn-delete" onclick="deleteProduct(${p.id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Supprimer ?')) {
+                saveProducts(getProducts().filter(p => p.id !== id));
+                displayProducts();
+                displayAdminProducts();
+            }
+        }
+
+        displayProducts();
+    </script>
 </body>
 </html>
